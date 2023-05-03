@@ -10,4 +10,9 @@ public class HelloWorld {
     public String helloworld(){
         return "Hello World\n";
     }
+
+    @GetMapping("/status")
+    public String status(){
+        return "Under Construction !\n";
+    }
 }
