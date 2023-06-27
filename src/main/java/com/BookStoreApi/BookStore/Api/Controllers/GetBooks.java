@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.BookStoreApi.BookStore.Api.Models.Book;
@@ -24,10 +25,17 @@ public class GetBooks {
     private BooksRepository booksRepository;
 
     @GetMapping("/v1/api/book")
-    public ResponseEntity<String> getBooks(){
+    public ResponseEntity<String> getBooks(@RequestParam(required = false) String name ){
 
         List<Book> books=new ArrayList<Book>();
-        booksRepository.findAll().forEach(books::add);
+
+        if(name == null){
+            booksRepository.findAll().forEach(books::add);
+        }
+        else{
+            booksRepository.findByNameContainingIgnoreCase(name).forEach(books::add);
+        }
+        
 
         Gson gson = new Gson();
 
