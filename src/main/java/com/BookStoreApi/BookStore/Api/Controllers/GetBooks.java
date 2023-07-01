@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +27,28 @@ public class GetBooks {
     private BooksRepository booksRepository;
 
     @GetMapping("/v1/api/book")
-    public ResponseEntity<String> getBooks(@RequestParam(required = false) String name ){
+    public ResponseEntity<String> getBooks(@RequestParam(required = false) String name, @RequestParam(required = false) Integer maxItems ){
 
         List<Book> books=new ArrayList<Book>();
 
-        if(name == null){
+        
+        if(name == null && maxItems == null){
+            //name and maxItems parameter is missing
             booksRepository.findAll().forEach(books::add);
         }
+        else if(name != null && maxItems == null){
+            //name is present, but maxItems parameter is missing
+            booksRepository.findByNameContainingIgnoreCase(name).forEach(books::add);
+        }
+        else if( name == null && maxItems !=null){
+            //name is missing but maxItems parameter is present
+            //select * from books limit `maxItems`
+            Pageable limit = PageRequest.of(0,maxItems);
+            booksRepository.findAll(limit).forEach(books::add);
+        }
         else{
+            // both name and maxItems paramter is present
+            //select * from books where name like '%name%' limit `maxItems`
             booksRepository.findByNameContainingIgnoreCase(name).forEach(books::add);
         }
         
