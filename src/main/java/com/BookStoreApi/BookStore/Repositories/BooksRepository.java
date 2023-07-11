@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BooksRepository extends JpaRepository <Book, Long>{
 
-    List<Book> findByNameContainingIgnoreCase(String name);
+    List<Book> findByTitleContainingIgnoreCase(String title);
 
-    Page<Book> findByNameContainingIgnoreCase(String name, Pageable limit);
+    Page<Book> findByTitleContainingIgnoreCase(String title, Pageable limit);
 
 }
