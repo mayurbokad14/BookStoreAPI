@@ -7,6 +7,9 @@ import jakarta.persistence.*;
 public class Inventory {
 
     @Id
+    @Column(nullable = false)
+    private String isbn;
+
     @OneToOne
     @JoinColumn(name = "isbn")
     private Book book;
@@ -30,7 +33,16 @@ public class Inventory {
         this.quantity = quantity;
     }
 
-    public Inventory(Book book, double quantity) {
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public Inventory(String isbn, Book book, double quantity) {
+        this.isbn = isbn;
         this.book = book;
         this.quantity = quantity;
     }

@@ -3,7 +3,7 @@ package com.BookStoreApi.BookStore.Models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Customer")
+@Table(name = "customers")
 public class Customer {
     
     @Id

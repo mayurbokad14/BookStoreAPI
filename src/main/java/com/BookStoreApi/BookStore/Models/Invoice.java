@@ -6,7 +6,7 @@ import org.hibernate.annotations.Type;
 import java.util.Date;
 
 @Entity
-@Table(name = "Invoice")
+@Table(name = "invoices")
 public class Invoice {
     @Id
     @Column
