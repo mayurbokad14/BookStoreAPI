@@ -1,4 +1,4 @@
-package com.BookStoreApi.BookStore.Models;
+package com.BookStoreApi.BookStore.Api.Controllers;
 
 
 import org.springframework.web.bind.annotation.GetMapping;

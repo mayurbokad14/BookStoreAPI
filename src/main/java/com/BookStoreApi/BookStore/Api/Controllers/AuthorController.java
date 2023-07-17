@@ -1,7 +1,9 @@
 package com.BookStoreApi.BookStore.Api.Controllers;
 
 import com.BookStoreApi.BookStore.Models.Author;
+import com.BookStoreApi.BookStore.Repositories.AuthorRepository;
 import com.google.gson.JsonObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin
 public class AuthorController{
+
+    @Autowired
+    AuthorRepository authorRepository;
+
     @PostMapping("/bookstore/v1/author")
     public ResponseEntity<String> addAuthor(@RequestBody Author author){
 
@@ -37,13 +43,32 @@ public class AuthorController{
             return new ResponseEntity<String>(response.toString(),headers,HttpStatus.BAD_REQUEST);
         }
 
+        if(author.getName().length() > 100){
+            response.addProperty("Status",HttpStatus.BAD_REQUEST.value());
+            response.addProperty("success",false);
+            response.addProperty("message","you are exceeding length of 20 characters for author name");
+            return new ResponseEntity<String>(response.toString(),headers,HttpStatus.BAD_REQUEST);
+        }
 
+        if(author.getBio().length() > 255){
+            response.addProperty("status", HttpStatus.BAD_REQUEST.value());
+            response.addProperty("success", false);
+            response.addProperty("message", "You are exceeding length of 255 characters for author bio-data");
+            return new ResponseEntity<String>(response.toString(),headers,HttpStatus.BAD_REQUEST);
+        }
 
+        //create a new Author object
+        authorRepository.save(
+                new Author(
+                        author.getName(),
+                        author.getBio()
+                )
+        );
 
 
         response.addProperty("status",HttpStatus.OK.value());
         response.addProperty("success", true);
-        response.addProperty("message", "Currently this endpoint is under construction");
+        response.addProperty("message", "New Author added to library : " + author.getName());
 
         return new ResponseEntity<String>(response.toString(), headers, HttpStatus.OK);
 

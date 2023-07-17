@@ -41,8 +41,7 @@ public class Author {
         this.bio = bio;
     }
 
-    public Author(long author_id, String name, String bio) {
-        this.author_id = author_id;
+    public Author(String name, String bio) {
         this.name = name;
         this.bio = bio;
     }
