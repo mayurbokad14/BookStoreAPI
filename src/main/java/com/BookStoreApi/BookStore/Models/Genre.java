@@ -14,15 +14,19 @@ public class Genre {
     @Column(nullable = false)
     private String name;
 
-    public long getGenre_id() {
+    public long getGenre_id()
+
+    {
         return genre_id;
     }
 
-    public void setGenre_id(long genre_id) {
+    public void setGenre_id(long genre_id)
+    {
         this.genre_id = genre_id;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
