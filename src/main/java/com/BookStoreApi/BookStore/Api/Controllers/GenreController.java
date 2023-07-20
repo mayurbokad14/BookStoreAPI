@@ -47,7 +47,12 @@ public class GenreController {
             response.addProperty("message","Name can not be empty");
             return new ResponseEntity<String>(response.toString(),headers,HttpStatus.BAD_REQUEST);
         }
-        if()
+        if(genre.getName().length() > 100){
+            response.addProperty("Status",HttpStatus.BAD_REQUEST.value());
+            response.addProperty("success",false);
+            response.addProperty("message","you are exceeding length of 20 characters for genre name");
+            return new ResponseEntity<String>(response.toString(),headers,HttpStatus.BAD_REQUEST);
+        }
 
         genreRepository.save(
                 new Genre(
