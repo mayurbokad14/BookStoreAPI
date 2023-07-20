@@ -1,23 +1,32 @@
 package com.BookStoreApi.BookStore.Api.Controllers;
 
 import com.BookStoreApi.BookStore.Models.Customer;
+import com.BookStoreApi.BookStore.Models.Genre;
+import com.BookStoreApi.BookStore.Repositories.CustomerRepository;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import javax.crypto.spec.PSource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin
 public class CustomerController {
+
+    @Autowired
+    CustomerRepository customerRepository;
+
     @PostMapping("/bookstore/v1/customer")
     public ResponseEntity<String> addCustomer(@RequestBody Customer customer){
         System.out.println("Request come from/bookstore/v1/customer");
@@ -63,6 +72,42 @@ public class CustomerController {
             response.addProperty("message","Not a valid phone_number");
             return new ResponseEntity<String>(response.toString(), headers,HttpStatus.BAD_REQUEST);
         }
+        if(customer.getName().length() > 100){
+            response.addProperty("Status",HttpStatus.BAD_REQUEST.value());
+            response.addProperty("success",false);
+            response.addProperty("message","you are exceeding length of 100 characters for customer name");
+            return new ResponseEntity<String>(response.toString(),headers,HttpStatus.BAD_REQUEST);
+        }
+
+        if(customer.getEmail().length() > 30){
+            response.addProperty("Status",HttpStatus.BAD_REQUEST.value());
+            response.addProperty("success",false);
+            response.addProperty("message","you are exceeding length of 30 characters for customer email");
+            return new ResponseEntity<String>(response.toString(),headers,HttpStatus.BAD_REQUEST);
+        }
+
+        if(customer.getAddress().length() > 200){
+            response.addProperty("Status",HttpStatus.BAD_REQUEST.value());
+            response.addProperty("success",false);
+            response.addProperty("message","you are exceeding length of 200 characters for customer address");
+            return new ResponseEntity<String>(response.toString(),headers,HttpStatus.BAD_REQUEST);
+        }
+
+        if(customer.getPhone_number().length() > 10){
+            response.addProperty("Status",HttpStatus.BAD_REQUEST.value());
+            response.addProperty("success",false);
+            response.addProperty("message","you are exceeding length of 10 number for customer phone");
+            return new ResponseEntity<String>(response.toString(),headers,HttpStatus.BAD_REQUEST);
+        }
+
+        customerRepository.save(
+            new Customer(
+                customer.getName(),
+                customer.getEmail(),
+                customer.getAddress(),
+                customer.getPhone_number()
+            )
+        );
 
         //prepare response payload
         response.addProperty("status" , HttpStatus.OK.value());
@@ -70,4 +115,35 @@ public class CustomerController {
         response.addProperty("message", "currently this endpoint is under construction ");
         return  new ResponseEntity<String>(response.toString(),headers, HttpStatus.OK);
     }
+
+    @GetMapping("/bookstore/v1/customer")
+    public ResponseEntity<String> getCustomer(@RequestParam(required = false) String name){
+
+        List<Customer> customer = new ArrayList<Customer>();
+
+        if (name== null){
+            customerRepository.findAll().forEach(customer::add);
+        }
+        else {
+            customerRepository.findByNameContainingIgnoreCase(name).forEach(customer::add);
+        }
+
+
+        JsonObject response = new JsonObject();
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        Gson gson = new Gson();
+        JsonElement element = gson.toJsonTree(customer, new TypeToken<List<Customer>>() {}.getType());
+        JsonArray jsonArray = element.getAsJsonArray();
+
+        response.addProperty("status",HttpStatus.OK.value());
+        response.addProperty("success", true);
+        response.addProperty("message", "Data fetched successfully");
+        response.add("data", jsonArray);
+
+        return new ResponseEntity<String>(response.toString(), httpHeaders, HttpStatus.OK );
+    }
+
 }
