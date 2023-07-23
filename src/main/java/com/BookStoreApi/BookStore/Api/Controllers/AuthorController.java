@@ -54,7 +54,7 @@ public class AuthorController {
         if (author.getName().length() > 100) {
             response.addProperty("Status", HttpStatus.BAD_REQUEST.value());
             response.addProperty("success", false);
-            response.addProperty("message", "you are exceeding length of 20 characters for author name");
+            response.addProperty("message", "you are exceeding length of 100 characters for author name");
             return new ResponseEntity<String>(response.toString(), headers, HttpStatus.BAD_REQUEST);
         }
 
@@ -67,10 +67,10 @@ public class AuthorController {
 
         //create a new Author object
         authorRepository.save(
-                new Author(
-                        author.getName(),
-                        author.getBio()
-                )
+            new Author(
+                author.getName(),
+                author.getBio()
+            )
         );
 
         response.addProperty("status", HttpStatus.OK.value());

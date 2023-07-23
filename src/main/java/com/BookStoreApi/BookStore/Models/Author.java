@@ -17,15 +17,18 @@ public class Author {
     @Column(nullable = false)
     private String bio;
 
-    public double getAuthor_id() {
+    public long getAuthor_id() {
         return author_id;
     }
+
     public void setAuthor_id(long author_id) {
         this.author_id = author_id;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -33,9 +36,11 @@ public class Author {
     public String getBio() {
         return bio;
     }
+
     public void setBio(String bio) {
         this.bio = bio;
     }
+
     public Author(String name, String bio) {
         this.name = name;
         this.bio = bio;
