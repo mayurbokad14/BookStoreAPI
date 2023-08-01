@@ -295,7 +295,7 @@ public class BookController {
             return new ResponseEntity<String>(response.toString(), headers, HttpStatus.BAD_REQUEST);
         }
 
-        /*booksRepository.save(new Book(
+        booksRepository.save(new Book(
             book.getIsbn().trim(),
             book.getTitle().trim(),
             book.getAuthor(),
@@ -303,7 +303,7 @@ public class BookController {
             book.getPublication_date(),
             book.getPrice(),
             book.getDescription()
-        ));*/
+        ));
 
         //System.out.println(book.getPublication_date().toString());
 
