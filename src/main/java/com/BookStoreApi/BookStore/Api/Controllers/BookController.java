@@ -6,18 +6,21 @@ import com.BookStoreApi.BookStore.Models.Genre;
 import com.BookStoreApi.BookStore.Repositories.AuthorRepository;
 import com.BookStoreApi.BookStore.Repositories.BooksRepository;
 import com.BookStoreApi.BookStore.Repositories.GenreRepository;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @RestController
@@ -313,5 +316,31 @@ public class BookController {
 
         return new ResponseEntity<String>(response.toString(),headers, HttpStatus.OK);
 
+    }
+
+    @GetMapping("/bookstore/v1/book")
+    public ResponseEntity<String> listBooks(){
+
+        JsonObject response = new JsonObject();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        response.addProperty("status",HttpStatus.OK.value());
+        response.addProperty("success",true);
+
+        List<Book> books = new ArrayList<Book>();
+
+        booksRepository.findAll().forEach(books::add);
+        Gson gson = new Gson();
+
+        JsonElement element = gson.toJsonTree(books, new TypeToken<List<Book>>() {}.getType());
+        JsonArray jsonArray = element.getAsJsonArray();
+
+        response.addProperty("message","Data Fetched successfully");
+
+        response.add("data", jsonArray);
+
+        return new ResponseEntity<String>(response.toString(),httpHeaders,HttpStatus.OK);
     }
 }
